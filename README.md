@@ -1,6 +1,8 @@
 # Installation-of-open-source-analog-design-tools-with-sky130-PDK
  Analog design tools - 1) Xschem , 2) Gaw , 3) Ngspice , 4) Magic , 5) Klayout . Follow this repository to install all the necessary tools for analog VLSI designing.
 
+REVISED for Ubuntu 24.04.3 LTS
+
 ## Contents  
 - [1. Tools and PDK Setup](#1-Tools-and-PDK-setup)  
   - [1.1 Tools Setup](#11-Tools-setup)
@@ -19,7 +21,7 @@ For our _analog design_, we need to install some tools. Here we will use -
 _**EDA tools and pdks require these for correct installation.  
 JUST COPY AND PASTE THE FOLLWING COMMAND PROPERLY.**_  
 ```  
-sudo apt-get install m4 tcsh csh libx11-dev libx11-xcb-dev tcl-dev tcllib swig vim-gtk tk-dev libcairo2-dev mesa-common-dev libglu1-mesa-dev libncurses-dev build-essential clang bison flex libreadline-dev gawk libffi-dev git graphviz xdot pkg-config python3 libboost-system-dev vim adms autoconf automake libtool libxpm-dev libxaw7-dev libssl-dev libgtk-3-dev libboost-python dev libboost-filesystem-dev zlib1g-dev xterm graphicsmagick ghostscript --assume-yes  
+sudo apt-get install m4 tcsh csh libx11-dev libx11-xcb-dev tcl-dev tcllib swig vim-gtk3 tk-dev libcairo2-dev mesa-common-dev libglu1-mesa-dev libncurses-dev build-essential clang bison flex libreadline-dev gawk libffi-dev git graphviz xdot pkg-config python3 vim adms autoconf automake libtool libxpm-dev libxaw7-dev libssl-dev libgtk-3-dev libboost-all-dev zlib1g-dev xterm graphicsmagick ghostscript --assume-yes
 ```
 This process will take some time. So, keep patience until all the libraries and packages are not installed properly. 
   
@@ -28,8 +30,8 @@ This process will take some time. So, keep patience until all the libraries and 
 - Just copy and paste the following commands in ubuntu terminal one after another. 
    - **Update Ubuntu Packages** :-  
      ```  
-      sudo apt-get update  
-      sudo apt-get install build-essential gcc make perl dkms
+      sudo apt update  
+      sudo apt install build-essential gcc make perl dkms
      ```  
    - **Install Git on Ubuntu** (If you have this, please ignore the step):-  
      ```  
@@ -46,11 +48,8 @@ This process will take some time. So, keep patience until all the libraries and 
    - **Create new directory 'design' and sub-directories 'tools' and 'pdks':-**  
      - Create this directory in **/home** directory  location.  
        ```  
-       mkdir open_source   
-       ```  
-     - Entering into the **open_source** directory -  
-       ```  
-       cd design  
+       mkdir VLSI_design
+       cd VLSI_design  
        ```
      - Creating two directories named as **tools** & **pdk**   
        ```  
@@ -63,7 +62,7 @@ This process will take some time. So, keep patience until all the libraries and 
 ####Installation of Xschem :-
 - Change directory to tools, which is the sub-folder of **open_source**  
   ```  
-  cd  ~/open_source/tools   
+  cd  tools   
   ```  
  - **Download xschem from github:-**  
    ```  
@@ -112,9 +111,24 @@ This process will take some time. So, keep patience until all the libraries and 
    ./autogen.sh --adms  
    mkdir release  
    cd release  
-   ./configure --with-x --enable-xspice --disable-debug --enable-cider --with-readline=yes --enable-openmp	
-   make -j4  
-   sudo make install  
+   ../configure --prefix=$HOME/opt/ngspice \
+             --with-x \
+             --enable-xspice \
+             --enable-cider \
+             --enable-predictor \
+             --enable-osdi \
+             --with-readline=yes \
+             --enable-openmp \
+             --disable-debug \
+             CFLAGS="-m64 -O2" \
+             LDFLAGS="-m64 -s"
+   make -j$(nproc) 
+   make install
+   source ~/.bashrc
+   export NGSPICE_BIN="$HOME/opt/ngspice/bin"
+   export PATH="$NGSPICE_BIN:$PATH"
+   source ~/.bashrc
+   ngspice -v
    ```   
  - **VERIFY NGspice installation :-**  
    If ngspice has been installed properly it will show as following in terminal. NGspice is **command line interface (CLI)** , so that you can’t see any GUI window.  
