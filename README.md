@@ -140,18 +140,15 @@ This process will take some time. So, keep patience until all the libraries and 
 
 ###GAW Installation
  - **GAW** is used to display output waveforms from xschem simulation.  
- - Migrate to the tools installation root directory.  
-   ```  
-   cd ~/open_source/tools   
-   ```  
- - Copy the download link of zip file of gaw.  
+ - Download gaw from here: [Gaw](https://www.rvq.fr/php/ndl.php?id=gaw.?-.*)  and move it to the tools folder
    ``` 
-   wget http://download.tuxfamily.org/gaw/download/gaw3-20220315.tar.gz   
-   tar -xvzf gaw3-20220315.tar.gz  
-   cd gaw3-20220315	 
-   ./configure  
+   tar -xvzf gaw3-2025*****.tar.gz
+   cd gaw3-2025 *****	 
+   ./configure --prefix=$HOME/opt/gaw
    make -j$(nproc)  
-   sudo make install	
+   make install	
+   echo 'export PATH="$HOME/opt/gaw/bin:$PATH"' >> ~/.bashrc
+   source ~/.bashrc
    ```  
  - To check the installation has been properly done yet or not, type the following command - 
    ```  
@@ -170,9 +167,15 @@ This process will take some time. So, keep patience until all the libraries and 
  - **Magic installation**-  
    ```
    cd magic  
-   ./configure
-   make  
-   sudo make install
+   ./configure --prefix=$HOME/opt/magic \
+            --enable-tcl \
+            --with-tcl=/usr/lib/tcl8.6 \
+            --with-tk=/usr/lib/tk8.6 \
+            --with-x
+   make -j$(nproc)
+   make install
+   echo -e '\n# Magic VLSI tool\nexport MAGIC_BIN="$HOME/opt/magic/bin"\nexport PATH="$MAGIC_BIN:$PATH"\nexport CAD_ROOT="$HOME/opt/magic/lib"  # Required by some PDKs' >> ~/.bashrc
+   source ~/.bashrc
    ```  
  - **Verify the installation of magic** :-  
    Run **magic** command to invoke tool
@@ -197,9 +200,14 @@ This process will take some time. So, keep patience until all the libraries and 
    ```  
  - **Install netgen**:- 
    ```  
-   ./configure  
-   make
-   sudo make install
+   ./configure --prefix=$HOME/opt/netgen \
+            --enable-tcl \
+            --with-tcl=/usr/lib/tcl8.6 \
+            --with-tk=/usr/lib/tk8.6
+   make -j$(nproc)
+   make install
+   echo -e '\n# Netgen LVS tool\nexport NETGEN_BIN="$HOME/opt/netgen/bin"\nexport PATH="$NETGEN_BIN:$PATH"' >> ~/.bashrc
+   source ~/.bashrc
    ```
 
 ###1.2 PDK Setup  
@@ -218,25 +226,36 @@ This process will take some time. So, keep patience until all the libraries and 
    ```  
  - **Download pdk from github** :-	
    ```  
-   git clone git://opencircuitdesign.com/open_pdks	
+   git clone https://github.com/RTimothyEdwards/open_pdks.git	
    cd open_pdks  
    ```  
  - For installing only analog PDK run this command. Less time and disk space for download.  
  - **Copy the following command in the terminal** -  
    ```  
-   ./configure --enable-sky130-pdk --enable-sram-sky130 --disable-sc-hs-sky130 --disable-sc-ms sky130 --disable-sc-ls_x0002_sky130 --disable-sc-lp-sky130 --disable-sc-hd-sky130 --disable-sc-hdll-sky130 --disable-sc-hvl-sky130	
+   ./configure --prefix=$HOME/open_source/pdk/sky130 \
+            --enable-sky130-pdk \
+            --enable-sram-sky130 \
+            --disable-sc-hs-sky130 \
+            --disable-sc-ms-sky130 \
+            --disable-sc-ls-sky130 \
+            --disable-sc-lp-sky130 \
+            --disable-sc-hd-sky130 \
+            --disable-sc-hdll-sky130 \
+            --disable-sc-hvl-sky130	
    ```  
  - This process may take **1hr - 2hrs** or more according to your internet speed. 
    ```  
-   make  
-   sudo make install 
+   make -j$(nproc)  
+   make install 
    make veryclean	  
+   echo -e '\n# Sky130 PDK\nexport PDK_ROOT="$HOME/open_source/pdk/sky130/share/pdk"\nexport STD_CELL_LIBRARY="sky130_fd_sc_hd"' >> ~/.bashrc
+   source ~/.bashrc
    ```  
  #### STRUCTURE AND LOCATION OF INSTALLED PDK**:-  
- - At this point the complete PDK has been installed in _**/usr/local/share/pdk**_. To check the PDKs have been installed or not, migrate to the location (_**/usr/local/share/pdk**_) using ubuntu GUI or Commands. Using command Line Interface:- 
+ - At this point, the Sky130 PDK has been installed in ~/open_source/pdk/sky130/share/pdk.
+To verify the installation, navigate to this location using the terminal:
    ```  
-   cd  /  
-   cd /usr/local/share/pdk  
+   cd ~/open_source/pdk/sky130/share/pdk
    ```  
  - You can check there will will be **two PDK variants** -
    1)  **sky130A** 	
