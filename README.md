@@ -74,9 +74,11 @@ This process will take some time. So, keep patience until all the libraries and 
    ```  
  - **Install xschem:-**  
    ```  
-   ./configure   
-   make 
-   sudo make install  
+   ./configure --prefix=$HOME/opt/xschem
+   make -j$(nproc)
+   make install
+   echo -e '\n# Xschem\nexport XSCHEM_BIN="$HOME/opt/xschem/bin"\nexport PATH="$XSCHEM_BIN:$PATH"' >> ~/.bashrc
+   source ~/.bashrc
    ```  
  - Run **xschem** command to **check** tool invoking:-	
    ```  
@@ -275,10 +277,10 @@ To verify the installation, navigate to this location using the terminal:
  - Setup for running xschem and ngspice with sky130 pdk. 
  - **N.B - Please carefully follow these steps and do the same which has been shown here. If  any mistake occured during this set-up process, either Xschem or NGspice will show you error.**  
  - Change the directory to _**xschem**_ which has been created earlier.
-   ```  
-   cd xschem	
-   ln -s /usr/local/share/pdk/sky130A/libs.tech/xschem/xschemrc	  
-   ln -s /usr/local/share/pdk/sky130A/libs.tech/ngspice/spinit .spiceinit      
+   ```    
+   cd xschem
+   ln -s $PDK_ROOT/sky130A/libs.tech/xschem/xschemrc xschemrc
+   ln -s $PDK_ROOT/sky130A/libs.tech/ngspice/spinit .spiceinit
    ```  
  - Write this command to check wheather the path has been linked properly or not.You will see the lines in the terminal which has been shown in the following diagram if PDK path and NGspice path has been properly linked with xschem.  
    ```  
